@@ -14,7 +14,7 @@ jobs:
         os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
-    name: Build on ${{ matrix.os.os }} (${{ matrix.os.runtime }})
+    name: Publish with ${{ matrix.os.os }} (${{ matrix.os.runtime }})
 
     steps:
       - uses: actions/checkout@v3
@@ -37,23 +37,7 @@ jobs:
         with:
           name: build
           path: build
-
-  publish:
-    needs: build
-
-    strategy:
-      matrix:
-        os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
-
-    runs-on: ${{ matrix.os.os }}
-    name: Upload ${{ matrix.os.os }} (${{ matrix.os.runtime }})
-
-    steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3.0.0
-        with:
-          name: build
-
+          
       - name: Zip to ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
         uses: thedoctor0/zip-release@main
         with:
@@ -67,6 +51,5 @@ jobs:
 
       - name: Upload ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip to this release
         env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip -R ${{ github.repositoryUrl }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
