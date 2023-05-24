@@ -15,6 +15,9 @@ jobs:
 
     runs-on: ${{ matrix.os.os }}
     name: Publish with ${{ matrix.os.os }} (${{ matrix.os.runtime }})
+    
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +38,8 @@ jobs:
       - name: Zip to ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
         uses: thedoctor0/zip-release@main
         with:
-          path: build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
+          directory: build
+          path: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
           filename: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
 
       - name: SHA256 checksum
