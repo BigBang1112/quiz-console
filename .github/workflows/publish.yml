@@ -14,7 +14,7 @@ jobs:
         os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
-    name: Build on ${{ matrix.os.os }}
+    name: Build on ${{ matrix.os.os }}-${{ matrix.os.runtime }}
 
     steps:
       - uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
         os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
-    name: Upload ${{ matrix.os.os }}
+    name: Upload ${{ matrix.os.os }}-${{ matrix.os.runtime }}
 
     steps:
       - name: Download a Build Artifact
@@ -68,10 +68,4 @@ jobs:
       - name: Upload ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip to this release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip \
-            -f '@${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip'
+        run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
