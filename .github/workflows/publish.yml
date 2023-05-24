@@ -11,8 +11,9 @@ permissions:
   contents: write # important for release description edit and asset upload
 
 jobs:
-  metadata:
+  set-description:
     runs-on: ubuntu-latest
+    name: Set release description
     
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,7 +27,7 @@ jobs:
         run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n`Automatically creating the release... (do not edit description!)`\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`')"
     
   build:
-    needs: metadata
+    needs: set-description
     
     strategy:
       matrix:
