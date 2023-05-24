@@ -14,7 +14,7 @@ jobs:
         os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
-    name: Publish on ${{ matrix.os.os }}
+    name: Build on ${{ matrix.os.os }}
 
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +46,7 @@ jobs:
         os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
+    name: Upload ${{ env.PROJECT_NAME }}-${{ matrix.os.os }}
 
     steps:
       - name: Download a Build Artifact
