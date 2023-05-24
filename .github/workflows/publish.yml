@@ -5,6 +5,7 @@ on:
     types: [published]
 
 env:
+  PROJECT_NAME: QuizConsole
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -30,8 +31,7 @@ jobs:
     name: Publish with ${{ matrix.os.os }} (${{ matrix.os.runtime }})
     
     env:
-      PROJECT_NAME: QuizConsole
-      ZIP_FILE: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
+      ZIP_FILE: ${{ PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
     
     permissions:
       contents: write # important for upload
