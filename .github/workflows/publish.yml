@@ -6,6 +6,9 @@ on:
 
 env:
   PROJECT_NAME: QuizConsole
+  
+permissions:
+  contents: write # important for release description edit and asset upload
 
 jobs:
   metadata:
@@ -34,9 +37,6 @@ jobs:
     
     env:
       ZIP_SUFFIX: -${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
-    
-    permissions:
-      contents: write # important for upload
 
     steps:
       - uses: actions/checkout@v3
