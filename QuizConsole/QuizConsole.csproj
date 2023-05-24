@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<TrimMode>partial</TrimMode>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

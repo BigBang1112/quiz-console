@@ -1,23 +1,66 @@
 ﻿using QuizConsole;
 using Spectre.Console;
 
-var quizFile = args.FirstOrDefault();
-
 Console.Title = "Quiz Console";
 
-quizFile ??= AnsiConsole.Prompt(new SelectionPrompt<string>()
-    .Title("Select a [green]quiz[/]: ")
-    .MoreChoicesText("[grey](Move up and down to reveal more quizzes)[/]")
-    .AddChoices(Directory.GetFiles("Quiz")));
+// Quiz selection
 
-var deserializer = new YamlDotNet.Serialization.Deserializer();
+var quizFile = args.FirstOrDefault();
 
 Quiz quiz;
 
-using (var reader = new StreamReader(quizFile))
+while (true)
 {
-    quiz = deserializer.Deserialize<Quiz>(reader);
+    quizFile ??= AnsiConsole.Prompt(new SelectionPrompt<string>()
+        .Title("Select a [green]quiz[/]: ")
+        .MoreChoicesText("[grey](Move up and down to reveal more quizzes)[/]")
+        .AddChoices(Directory.GetFiles("Quiz")));
+
+    var deserializer = new YamlDotNet.Serialization.Deserializer();
+
+    try
+    {
+        using var reader = new StreamReader(quizFile);
+        
+        quiz = deserializer.Deserialize<Quiz>(reader);
+    }
+    catch (YamlDotNet.Core.YamlException ex)
+    {
+        AnsiConsole.WriteLine(ex.ToString());
+        AnsiConsole.WriteLine();
+
+        if (AnsiConsole.Confirm("Restart?"))
+        {
+            AnsiConsole.Clear();
+            quizFile = null;
+            continue;
+        }
+        else
+        {
+            return;
+        }
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.WriteException(ex);
+        AnsiConsole.WriteLine();
+
+        if (AnsiConsole.Confirm("Restart?"))
+        {
+            AnsiConsole.Clear();
+            quizFile = null;
+            continue;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    break;
 }
+
+// Quz action
 
 while (true)
 {
