@@ -72,7 +72,7 @@ jobs:
           path: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
           filename: ../${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
 
-      - name: SHA256 checksum
+      - name: SHA256 checksum # TODO: output the hash into artifact
         uses: Huy-Ngo/gha-sha@v1.1.0
         with:
           glob: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
@@ -92,16 +92,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - uses: MCJack123/ghaction-generate-release-hashes@v3
-        with:
-          file-name: hashes.txt
-          get-assets: true
-      
       - name: Set release information
         run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).')"
-      
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          path: hashes.txt
     
