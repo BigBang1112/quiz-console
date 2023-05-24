@@ -1,4 +1,4 @@
-name: Publish CLI
+name: Publish
 
 on:
   release:
@@ -24,7 +24,7 @@ jobs:
           submodules: recursive
       
       - name: Set release information
-        run: gh release edit ${{ github.ref_name }} -n "$(echo -e "*Release is being automatically created, please wait...*\n\n${{ github.event.release.body }}\n\n\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`")"
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '*Release is being automatically created, please wait...*\n\n${{ github.event.release.body }}\n\n\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`')"
     
   build:
     needs: prepare-description
@@ -79,11 +79,15 @@ jobs:
 
       - name: Upload ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }} to this release
         run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
-        
+      
+      - uses: MCJack123/ghaction-generate-release-hashes@v3
+        with:
+          file-name: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
+      
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          path: $GITHUB_ACTION_PATH
+          path: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
   
   finalize-description:
     needs: build
@@ -98,5 +102,5 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Set release information
-        run: gh release edit ${{ github.ref_name }} -n "$(echo -e "${{ github.event.release.body }}\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})")"
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).')"
     
