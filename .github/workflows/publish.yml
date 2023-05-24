@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
       
       - name: Add release information (temporary)
-        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n`Automatically creating the release...`\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`')"
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n`Automatically creating the release... (do not edit description!)`\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`')"
     
   build:
     needs: metadata
@@ -80,4 +80,4 @@ jobs:
         run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
         
       - name: Add release information (temporary)
-        run: gh release edit ${{ github.ref_name }} -n "${{ github.event.release.body }}\n\nThe ZIP was automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n`Automatically creating the release... (do not edit description!)`\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`\n\nThe ZIP was automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})')"
