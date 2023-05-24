@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
       
       - name: Add release information (temporary)
-        run: gh release edit ${{ github.ref_name }} -n "${{ github.event.release.body }}\n\nAutomatically creating the release...\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`"
+        run: gh release edit ${{ github.ref_name }} -n $(echo -e "${{ github.event.release.body }}\n\nAutomatically creating the release...\n\n**SHA256 win-x64** \`soon\`\n**SHA256 win-x86** \`soon\`\n**SHA256 linux-x64** \`soon\`")
     
   build:
     needs: metadata
