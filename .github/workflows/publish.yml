@@ -31,7 +31,7 @@ jobs:
     name: Publish with ${{ matrix.os.os }} (${{ matrix.os.runtime }})
     
     env:
-      ZIP_FILE: ${{ PROJECT_NAME }}-${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
+      ZIP_SUFFIX: -${{ matrix.os.runtime }}.${{ github.ref_name }}.zip
     
     permissions:
       contents: write # important for upload
@@ -61,20 +61,20 @@ jobs:
           -p:TrimMode=partial \
           --self-contained
           
-      - name: Zip to ${{ env.ZIP_FILE }}
+      - name: Zip to ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
         uses: thedoctor0/zip-release@main
         with:
           directory: build
           path: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
-          filename: ../${{ env.ZIP_FILE }}
+          filename: ../${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
 
       - name: SHA256 checksum
         uses: Huy-Ngo/gha-sha@v1.1.0
         with:
-          glob: ${{ env.ZIP_FILE }}
+          glob: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
 
-      - name: Upload ${{ env.ZIP_FILE }} to this release
-        run: gh release upload ${{ github.ref_name }} ${{ env.ZIP_FILE }}
+      - name: Upload ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }} to this release
+        run: gh release upload ${{ github.ref_name }} ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
         
       - name: Add release information (temporary)
         run: gh release edit ${{ github.ref_name }} -n "${{ github.event.release.body }}\n\nThe ZIP was automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})."
