@@ -6,11 +6,13 @@ on:
 
 env:
   PROJECT_NAME: QuizConsole
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   metadata:
     runs-on: ubuntu-latest
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
       - uses: actions/checkout@v3
