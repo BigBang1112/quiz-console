@@ -73,14 +73,14 @@ jobs:
           filename: ../${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
 
       - name: Calculate SHA256 (Windows)
-        if: matrix.os == 'windows-latest'
+        if: matrix.os.os == 'windows-latest'
         run: |
           $hash = Get-FileHash -Path '${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}' -Algorithm SHA256
           Write-Host "$($hash.Hash)"
           $hash.Hash | Out-File -FilePath "${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt"
 
       - name: Calculate SHA256 (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os.os == 'ubuntu-latest'
         run: |
           sha256sum "${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}" | awk '{print $1}' | tee >(cat) > ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
 
