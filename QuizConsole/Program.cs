@@ -60,14 +60,22 @@ while (true)
     break;
 }
 
-// Quz action
+// Quiz action
 
 while (true)
 {
+    // Question count
+
+    var questionCount = AnsiConsole.Prompt(new TextPrompt<int>("How many questions?")
+        .DefaultValue(quiz.Questions.Length)
+        .Validate(number => number > 0 ? ValidationResult.Success() : ValidationResult.Error("Must be greater than 0")));
+
+    Console.Clear();
+    
     var score = 0;
     var questionCounter = 0;
 
-    foreach (var question in quiz.Questions.OrderBy(x => Random.Shared.Next()))
+    foreach (var question in quiz.Questions.OrderBy(x => Random.Shared.Next()).Take(questionCount))
     {
         questionCounter++;
 
@@ -113,11 +121,11 @@ while (true)
 
         if (score == questionCounter)
         {
-            AnsiConsole.MarkupLine($"Score: [green]{score}[/]/[green]{questionCounter}[/]/{quiz.Questions.Length}");
+            AnsiConsole.MarkupLine($"Score: [green]{score}[/]/[green]{questionCounter}[/]/{questionCount}");
         }
         else
         {
-            AnsiConsole.MarkupLine($"Score: [yellow]{score}[/]/[yellow]{questionCounter}[/]/{quiz.Questions.Length}");
+            AnsiConsole.MarkupLine($"Score: [yellow]{score}[/]/[yellow]{questionCounter}[/]/{questionCount}");
         }
 
         AnsiConsole.WriteLine();
