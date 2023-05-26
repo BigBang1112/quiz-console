@@ -76,8 +76,9 @@ jobs:
         if: matrix.os.os == 'windows-latest'
         run: |
           $hash = Get-FileHash -Path '${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}' -Algorithm SHA256
-          Write-Host "$($hash.Hash)"
-          $hash.Hash | Out-File -FilePath "${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt"
+          $hashValue = $hash.Hash.Trim().ToLower()
+          Write-Host $hashValue
+          $hashValue | Out-File -FilePath "${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt"
 
       - name: Calculate SHA256 (Linux)
         if: matrix.os.os == 'ubuntu-latest'
@@ -110,8 +111,8 @@ jobs:
       
       - name: Read hash files
         run: |
-          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt)" | tr -d '\n' >> $GITHUB_ENV
-          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt)" | tr -d '\n' >> $GITHUB_ENV
+          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
+          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
           echo "HashLinuxX64=$(cat artifact/${{ env.PROJECT_NAME }}-linux-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
       
       - name: Set release information
