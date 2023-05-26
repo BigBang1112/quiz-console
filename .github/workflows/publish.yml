@@ -6,6 +6,7 @@ on:
 
 env:
   PROJECT_NAME: QuizConsole
+  ARTIFACT_NAME: artifact
   
 permissions:
   contents: write # important for release description edit and asset upload
@@ -56,7 +57,6 @@ jobs:
       - name: Publish ${{ matrix.os.runtime }}
         run: dotnet publish ${{ env.PROJECT_NAME }}
           -c Release
-          -f net7.0
           -r ${{ matrix.os.runtime }}
           -o build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
           -p:PublishSingleFile=true
@@ -91,6 +91,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
+          name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
           if-no-files-found: error
   
@@ -108,11 +109,13 @@ jobs:
       
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2.1.1
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
       
       - name: Read hash files
         run: |
-          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt) | tr -d '\n'" >> $GITHUB_ENV
-          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt) | tr -d '\n'" >> $GITHUB_ENV
+          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt | tr -d '\n')" >> $GITHUB_ENV
+          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt | tr -d '\n')" >> $GITHUB_ENV
           echo "HashLinuxX64=$(cat artifact/${{ env.PROJECT_NAME }}-linux-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
       
       - name: Set release information
