@@ -24,7 +24,7 @@ jobs:
           submodules: recursive
       
       - name: Set release information
-        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '*Release is being automatically created, please wait...*\n\n${{ github.event.release.body }}\n\n\n\n**SHA256 win-x64** `soon`\n**SHA256 win-x86** `soon`\n**SHA256 linux-x64** `soon`\n\nAssets are currently being generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})...')"
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '### *[Release is being automatically created, please wait...](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*\n\n${{ github.event.release.body }}')"
     
   build:
     needs: prepare-description
@@ -111,8 +111,8 @@ jobs:
       
       - name: Read hash files
         run: |
-          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
-          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
+          echo "HashWinX64=$(cat artifact/${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt)" | tr -d '\n' >> $GITHUB_ENV
+          echo "HashWinX86=$(cat artifact/${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt)" | tr -d '\n' >> $GITHUB_ENV
           echo "HashLinuxX64=$(cat artifact/${{ env.PROJECT_NAME }}-linux-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
       
       - name: Set release information
