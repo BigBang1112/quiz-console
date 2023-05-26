@@ -76,7 +76,7 @@ jobs:
         if: matrix.os.os == 'windows-latest'
         run: |
           $hash = Get-FileHash -Path '${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}' -Algorithm SHA256
-          $hashValue = $hash.Hash.ToLower()
+          $hashValue = $hash.Hash.ToLower().TrimEnd("`n")
           Write-Host $hashValue
           $hashValue | Out-File -FilePath "${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt"
 
