@@ -92,7 +92,6 @@ jobs:
         with:
           path: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
           if-no-files-found: error
-          retention-days: 90
   
   finalize-description:
     needs: build
