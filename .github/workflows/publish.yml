@@ -114,8 +114,8 @@ jobs:
       
       - name: Read hash files
         run: |
-          echo "HashWinX64=$(cat ${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt | tr -d '\n')" >> $GITHUB_ENV
-          echo "HashWinX86=$(cat ${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt | tr -d '\n')" >> $GITHUB_ENV
+          echo "HashWinX64=$(cat ${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt | sed -e 's/\r?\n$//')" >> $GITHUB_ENV
+          echo "HashWinX86=$(cat ${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt | sed -e 's/\r?\n$//')" >> $GITHUB_ENV
           echo "HashLinuxX64=$(cat ${{ env.PROJECT_NAME }}-linux-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
       
       - name: Set release information
