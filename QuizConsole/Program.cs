@@ -71,7 +71,13 @@ while (true)
         .Validate(number => number > 0 ? ValidationResult.Success() : ValidationResult.Error("Must be greater than 0")));
 
     Console.Clear();
-    
+
+    // Is revisit?
+
+    var revisit = AnsiConsole.Prompt(new TextPrompt<bool>("Revisit incorrectly answered questions?").DefaultValue(true));
+
+    Console.Clear();
+
     var score = 0;
     var questionCounter = 0; // unlike pickedQuestions index can vary depending on revisit questions
 
@@ -95,7 +101,7 @@ while (true)
                 score++;
             }
         }
-        else
+        else if (revisit)
         {
             var indexToInsert = Math.Min(pickedQuestions.Count - 1, i + 2 + Random.Shared.Next(5));
             pickedQuestions.Insert(indexToInsert, question);
