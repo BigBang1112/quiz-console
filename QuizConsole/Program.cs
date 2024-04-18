@@ -16,12 +16,11 @@ while (true)
         .MoreChoicesText("[grey](Move up and down to reveal more quizzes)[/]")
         .AddChoices(Directory.GetFiles("Quiz")));
 
-    var deserializer = new YamlDotNet.Serialization.Deserializer();
+    var deserializer = new YamlDotNet.Serialization.StaticDeserializerBuilder(new StaticContext()).Build();
 
     try
     {
         using var reader = new StreamReader(quizFile);
-        
         quiz = deserializer.Deserialize<Quiz>(reader);
     }
     catch (YamlDotNet.Core.YamlException ex)
@@ -71,52 +70,41 @@ while (true)
         .Validate(number => number > 0 ? ValidationResult.Success() : ValidationResult.Error("Must be greater than 0")));
 
     Console.Clear();
-    
+
+    // Is revisit?
+
+    var revisit = AnsiConsole.Prompt(new TextPrompt<bool>("Revisit incorrectly answered questions?").DefaultValue(true));
+
+    Console.Clear();
+
     var score = 0;
-    var questionCounter = 0;
+    var questionCounter = 0; // unlike pickedQuestions index can vary depending on revisit questions
 
-    foreach (var question in quiz.Questions.OrderBy(x => Random.Shared.Next()).Take(questionCount))
+    var pickedQuestions = quiz.Questions.OrderBy(x => Random.Shared.Next()).Take(questionCount).ToList();
+    var revisitQuestions = new HashSet<int>();
+
+    for (int i = 0; i < pickedQuestions.Count; i++)
     {
-        questionCounter++;
+        var question = pickedQuestions[i];
+        var isRevisitQuestion = revisitQuestions.Contains(i);
 
-        var answers = question.Answers.OrderBy(x => Random.Shared.Next()).ToArray();
-        var correctAnswers = new HashSet<string>();
-
-        foreach (var correct in question.Correct)
+        if (!isRevisitQuestion)
         {
-            correctAnswers.Add(question.Answers[correct]);
+            questionCounter++;
         }
 
-        var selectedAnswers = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
-            .Title(question.Question)
-            .AddChoices(answers));
-
-        AnsiConsole.WriteLine(question.Question);
-        AnsiConsole.WriteLine();
-
-        foreach (var selectedAnswer in selectedAnswers)
+        if (AskQuestion(question))
         {
-            if (correctAnswers.Contains(selectedAnswer))
+            if (!isRevisitQuestion)
             {
-                AnsiConsole.MarkupLine($"- [green]{selectedAnswer} (CORRECT)[/]");
-            }
-            else
-            {
-                AnsiConsole.MarkupLine($"- [red]{selectedAnswer} (WRONG)[/]");
+                score++;
             }
         }
-
-        foreach (var correctAnswer in correctAnswers.Where(x => !selectedAnswers.Contains(x)))
+        else if (revisit)
         {
-            AnsiConsole.MarkupLine($"- [yellow]{correctAnswer} (MISSING)[/]");
-        }
-
-        AnsiConsole.WriteLine();
-
-        // if all answers are correct
-        if (correctAnswers.Count == selectedAnswers.Count && !correctAnswers.Except(selectedAnswers).Any())
-        {
-            score++;
+            var indexToInsert = Math.Min(pickedQuestions.Count - 1, i + 2 + Random.Shared.Next(5));
+            pickedQuestions.Insert(indexToInsert, question);
+            revisitQuestions.Add(indexToInsert);
         }
 
         if (score == questionCounter)
@@ -134,4 +122,44 @@ while (true)
         Console.ReadKey();
         AnsiConsole.Clear();
     }
+}
+
+static bool AskQuestion(Entry question)
+{
+    var answers = question.Answers.OrderBy(x => Random.Shared.Next()).ToArray();
+    var correctAnswers = new HashSet<string>();
+
+    foreach (var correct in question.Correct)
+    {
+        correctAnswers.Add(question.Answers[correct]);
+    }
+
+    var selectedAnswers = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
+        .Title(question.Question)
+        .AddChoices(answers));
+
+    AnsiConsole.WriteLine(question.Question);
+    AnsiConsole.WriteLine();
+
+    foreach (var selectedAnswer in selectedAnswers)
+    {
+        if (correctAnswers.Contains(selectedAnswer))
+        {
+            AnsiConsole.MarkupLine($"- [green]{selectedAnswer} (CORRECT)[/]");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"- [red]{selectedAnswer} (WRONG)[/]");
+        }
+    }
+
+    foreach (var correctAnswer in correctAnswers.Where(x => !selectedAnswers.Contains(x)))
+    {
+        AnsiConsole.MarkupLine($"- [yellow]{correctAnswer} (MISSING)[/]");
+    }
+
+    AnsiConsole.WriteLine();
+
+    // if all answers are correct
+    return correctAnswers.Count == selectedAnswers.Count && !correctAnswers.Except(selectedAnswers).Any();
 }
