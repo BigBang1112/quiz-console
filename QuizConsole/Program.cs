@@ -16,12 +16,11 @@ while (true)
         .MoreChoicesText("[grey](Move up and down to reveal more quizzes)[/]")
         .AddChoices(Directory.GetFiles("Quiz")));
 
-    var deserializer = new YamlDotNet.Serialization.Deserializer();
+    var deserializer = new YamlDotNet.Serialization.StaticDeserializerBuilder(new StaticContext()).Build();
 
     try
     {
         using var reader = new StreamReader(quizFile);
-        
         quiz = deserializer.Deserialize<Quiz>(reader);
     }
     catch (YamlDotNet.Core.YamlException ex)
