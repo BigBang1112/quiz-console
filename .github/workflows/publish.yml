@@ -65,11 +65,11 @@ jobs:
 
       - name: Remove pdb file
         if: matrix.os.os == 'windows-latest'
-        run:  Remove-Item build/${{ env.PROJECT_NAME }}.pdb -Force
+        run:  Remove-Item build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}/${{ env.PROJECT_NAME }}.pdb -Force
 
       - name: Remove dbg file
         if: matrix.os.os == 'ubuntu-latest'
-        run: rm -f build/${{ env.PROJECT_NAME }}.dbg
+        run: rm -f build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}/${{ env.PROJECT_NAME }}.dbg
           
       - name: Zip to ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
         uses: thedoctor0/zip-release@0.7.6
