@@ -64,7 +64,7 @@ jobs:
           --self-contained
           
       - name: Zip to ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
-        uses: thedoctor0/zip-release@v0.7.6
+        uses: thedoctor0/zip-release@0.7.6
         with:
           directory: build
           path: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
