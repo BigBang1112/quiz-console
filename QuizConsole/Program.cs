@@ -138,10 +138,8 @@ static bool AskQuestion(Entry question)
         correctAnswers.Add(Markup.Escape(question.Answers[correct]));
     }
 
-    var escapedQuestion = Markup.Escape(question.Question);
-
     var selectedAnswers = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
-        .Title(escapedQuestion)
+        .Title(Markup.Escape(question.Question))
         .AddChoices(answers));
 
     AnsiConsole.WriteLine(question.Question);
