@@ -126,16 +126,22 @@ while (true)
 
 static bool AskQuestion(Entry question)
 {
-    var answers = question.Answers.OrderBy(x => Random.Shared.Next()).ToArray();
+    var answers = question.Answers
+        .OrderBy(x => Random.Shared.Next())
+        .Select(Markup.Escape)
+        .ToArray();
+
     var correctAnswers = new HashSet<string>();
 
     foreach (var correct in question.Correct)
     {
-        correctAnswers.Add(question.Answers[correct]);
+        correctAnswers.Add(Markup.Escape(question.Answers[correct]));
     }
 
+    var escapedQuestion = Markup.Escape(question.Question);
+
     var selectedAnswers = AnsiConsole.Prompt(new MultiSelectionPrompt<string>()
-        .Title(question.Question)
+        .Title(escapedQuestion)
         .AddChoices(answers));
 
     AnsiConsole.WriteLine(question.Question);

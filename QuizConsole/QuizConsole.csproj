@@ -6,14 +6,14 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<TrimMode>partial</TrimMode>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<IsAotCompatible>true</IsAotCompatible>
 		<PublishAot>true</PublishAot>
 		<StripSymbols>true</StripSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Spectre.Console" Version="0.48.0" />
+		<PackageReference Include="Spectre.Console" Version="0.47.0" />
 		<PackageReference Include="Vecc.YamlDotNet.Analyzers.StaticGenerator" Version="13.7.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
