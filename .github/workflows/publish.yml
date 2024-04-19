@@ -32,7 +32,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [{ os: windows-latest, runtime: win-x64 }, { os: windows-latest, runtime: win-x86 }, { os: ubuntu-latest, runtime: linux-x64 }]
+        os: [{ os: windows-latest, runtime: win-x64 }, { os: ubuntu-latest, runtime: linux-x64 }]
 
     runs-on: ${{ matrix.os.os }}
     name: Publish with ${{ matrix.os.os }} (${{ matrix.os.runtime }})
@@ -62,9 +62,17 @@ jobs:
           -p:PublishAot=true
           -p:ContinuousIntegrationBuild=true
           --self-contained
+
+      - name: Remove pdb file
+        if: matrix.os.os == 'windows-latest'
+        run:  Remove-Item build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}/${{ env.PROJECT_NAME }}.pdb -Force
+
+      - name: Remove dbg file
+        if: matrix.os.os == 'ubuntu-latest'
+        run: rm -f build/${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}/${{ env.PROJECT_NAME }}.dbg
           
       - name: Zip to ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}
-        uses: thedoctor0/zip-release@v0.7.6
+        uses: thedoctor0/zip-release@0.7.6
         with:
           directory: build
           path: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
@@ -89,7 +97,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.3.2
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.os.runtime }}
           path: ${{ env.PROJECT_NAME }}${{ env.ZIP_SUFFIX }}.hash.txt
           if-no-files-found: error
   
@@ -108,14 +116,14 @@ jobs:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v4.1.5
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          pattern: ${{ env.PROJECT_NAME }}-*
+          merge-multiple: true
       
       - name: Read hash files
         run: |
           echo "HashLinuxX64=$(tr -d '\r' < ${{ env.PROJECT_NAME }}-linux-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
           echo "HashWinX64=$(tr -d '\r' < ${{ env.PROJECT_NAME }}-win-x64.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
-          echo "HashWinX86=$(tr -d '\r' < ${{ env.PROJECT_NAME }}-win-x86.${{ github.ref_name }}.zip.hash.txt)" >> $GITHUB_ENV
       
       - name: Set release information
-        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n**SHA256 win-x64** `${{ env.HashWinX64 }}`\n**SHA256 win-x86** `${{ env.HashWinX86 }}`\n**SHA256 linux-x64** `${{ env.HashLinuxX64 }}`\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).')"
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\n**SHA256 win-x64** `${{ env.HashWinX64 }}`\n**SHA256 linux-x64** `${{ env.HashLinuxX64 }}`\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).')"
     
